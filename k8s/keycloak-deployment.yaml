@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: keycloak-custom:26.6.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - start
+            - --http-enabled=true
+            - --proxy-headers=xforwarded
+            - --hostname-strict=false
+          ports:
+            - containerPort: 8080
+            - containerPort: 9000
+          env:
+            - name: KC_DB
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-secret
+                  key: KC_DB
+            - name: KC_DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-secret
+                  key: KC_DB_URL
+            - name: KC_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-secret
+                  key: KC_DB_USERNAME
+            - name: KC_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-secret
+                  key: KC_DB_PASSWORD
+            - name: KC_HEALTH_ENABLED
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-secret
+                  key: KC_HEALTH_ENABLED
+            - name: KC_METRICS_ENABLED
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-secret
+                  key: KC_METRICS_ENABLED
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 9000
+            initialDelaySeconds: 45
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 9000
+            initialDelaySeconds: 60
+            periodSeconds: 20
