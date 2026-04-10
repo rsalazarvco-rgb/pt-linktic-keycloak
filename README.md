@@ -1,5 +1,5 @@
 # pt-linktic-keycloak
-# PT LinkTic - Migración de Keycloak a Kubernetes local
+# Migración de Keycloak a Kubernetes local
 
 ## 1. Descripción general
 
