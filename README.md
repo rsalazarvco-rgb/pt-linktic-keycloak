@@ -49,7 +49,7 @@ La arquitectura final implementada en entorno local quedó compuesta por los sig
 ├── .gitignore
 ├── k8s/
 │   ├── namespace.yaml
-│   ├── secret.example.yaml
+│   ├── secret-example.yaml
 │   ├── postgres-pvc.yaml
 │   ├── postgres-service.yaml
 │   ├── postgres-deployment.yaml
