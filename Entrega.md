@@ -119,11 +119,11 @@ La solución se organizó para publicación en GitHub con estructura sanitizada,
 .
 ├── Dockerfile
 ├── README.md
-├── ENTREGA_PRUEBA_TECNICA.md
+├── Entrega.md
 ├── .gitignore
 ├── k8s/
 │   ├── namespace.yaml
-│   ├── secret.example.yaml
+│   ├── secret-example.yaml
 │   ├── postgres-pvc.yaml
 │   ├── postgres-service.yaml
 │   ├── postgres-deployment.yaml
