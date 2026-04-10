@@ -111,7 +111,7 @@ Sirvieron como insumo para construir una imagen de Keycloak y definir una estrat
 
 En el entorno de trabajo local, los respaldos se organizaron de la siguiente manera:
 
-Nota: El acceso a las copias de seguridad requiere clave de autenticación. Comuníquese con el administrador, para mayor información o para su respectiva autorización de acceso.
+Nota: El acceso a las copias de seguridad requiere autorización, comuníquese con el administrador para mayor información.
 
 ```text
 backup/
