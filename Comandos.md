@@ -107,7 +107,7 @@ sudo systemctl cat caddy > ~/migration-backup/caddy/caddy.service.txt
 Se verificaron las bases de datos disponibles.
 
 ```bash
-PGPASSWORD='PASSWORD_REAL' psql -h localhost -U keycloak -d postgres -c '\l'
+PGPASSWORD='PASSWORD' psql -h localhost -U keycloak -d postgres -c '\l'
 ```
 
 ### 3.6. Exportación del dump de la base
@@ -116,7 +116,7 @@ Se generó el respaldo de la base `keycloak`.
 
 ```bash
 mkdir -p ~/migration-backup/postgres
-PGPASSWORD='PASSWORD_REAL' pg_dump -h localhost -U keycloak -d keycloak > ~/migration-backup/postgres/keycloak.sql
+PGPASSWORD='PASSWORD' pg_dump -h localhost -U keycloak -d keycloak > ~/migration-backup/postgres/keycloak.sql
 ```
 
 ### 3.7. Validación del dump generado
