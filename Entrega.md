@@ -149,5 +149,5 @@ https://github.com/rsalazarvco-rgb/pt-linktic-keycloak
 
 La prueba técnica fue resuelta con éxito en su componente principal de análisis, migración y reconstrucción. La plataforma quedó operativa en Kubernetes local, con persistencia funcional, base restaurada y acceso validado al admin console tanto en entorno local como en validación externa.
 
-El principal hallazgo técnico fue la identificación del atributo frontendUrl persistido en la base restaurada, cuya eliminación permitió resolver el comportamiento heredado del entorno original y cerrar satisfactoriamente la validación final de la solución.
+El principal hallazgo técnico fue la identificación del atributo `frontendUrl` persistido en la base restaurada, cuya eliminación permitió resolver el comportamiento heredado del entorno original y cerrar satisfactoriamente la validación final de la solución.
 
