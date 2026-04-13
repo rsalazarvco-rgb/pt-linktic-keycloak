@@ -42,10 +42,29 @@ La arquitectura final implementada en entorno local quedó compuesta por los sig
 
 ## 5. Estructura del repositorio
 
+## Tecnologías utilizadas
+
+- Docker Desktop
+- kind
+- kubectl
+- Kubernetes
+- PostgreSQL 18
+- Keycloak 26.6.0
+- PowerShell
+
+---
+
+## Estructura del repositorio
+
 ```text
 .
 ├── Dockerfile
 ├── README.md
+├── Entrega.md
+├── Hallazgos.md
+├── COMANDOS_EJECUTADOS.md
+├── SEGURIDAD_Y_CONSIDERACIONES.md
+├── PRUEBAS_Y_RESULTADOS.md
 ├── .gitignore
 ├── k8s/
 │   ├── namespace.yaml
@@ -55,7 +74,7 @@ La arquitectura final implementada en entorno local quedó compuesta por los sig
 │   ├── postgres-deployment.yaml
 │   ├── keycloak-service.yaml
 │   └── keycloak-deployment.yaml
-├── docs/
-│   └── screenshots/
-└── backup/
-    └── README.md
+├── backup/
+│   └── README.md
+└── docs/
+    └── screenshots/
