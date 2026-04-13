@@ -62,9 +62,9 @@ La arquitectura final implementada en entorno local quedó compuesta por los sig
 ├── README.md
 ├── Entrega.md
 ├── Hallazgos.md
-├── COMANDOS_EJECUTADOS.md
-├── SEGURIDAD_Y_CONSIDERACIONES.md
-├── PRUEBAS_Y_RESULTADOS.md
+├── Comando.md
+├── Sedguridad.md
+├── Pruebas_Resultados.md
 ├── .gitignore
 ├── k8s/
 │   ├── namespace.yaml
