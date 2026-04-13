@@ -140,15 +140,14 @@ La dificultad más relevante fue el redireccionamiento persistente al dominio or
 ## 10. Repositorio de entrega
 
 La solución fue publicada en el siguiente repositorio:
-
 ```text
 https://github.com/rsalazarvco-rgb/pt-linktic-keycloak
-
+````
 ---
 
-## 10. Repositorio de entrega
+## 11. Conclusión
 
-La solución fue publicada en el siguiente repositorio:
+La prueba técnica fue resuelta con éxito en su componente principal de análisis, migración y reconstrucción. La plataforma quedó operativa en Kubernetes local, con persistencia funcional, base restaurada y acceso validado al admin console tanto en entorno local como en validación externa.
 
-```text
-https://github.com/rsalazarvco-rgb/pt-linktic-keycloak
+El principal hallazgo técnico fue la identificación del atributo frontendUrl persistido en la base restaurada, cuya eliminación permitió resolver el comportamiento heredado del entorno original y cerrar satisfactoriamente la validación final de la solución.
+
