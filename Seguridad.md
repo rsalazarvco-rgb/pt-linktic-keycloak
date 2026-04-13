@@ -2,7 +2,7 @@
 
 ## 1. Propósito
 
-Este documento resume los principales aspectos de seguridad considerados durante la ejecución de la prueba técnica, así como las decisiones adoptadas para proteger información sensible, limitar riesgos durante la migración y publicar la solución de forma responsable en GitHub.
+Este documento resume los principales aspectos de seguridad considerados durante la ejecución de la prueba técnica, así como las decisiones adoptadas para proteger información sensible, reducir riesgos durante la migración y publicar la solución de forma responsable en GitHub.
 
 ---
 
@@ -11,11 +11,11 @@ Este documento resume los principales aspectos de seguridad considerados durante
 Durante la ejecución del ejercicio se procuró trabajar bajo los siguientes principios:
 
 - minimizar cambios sobre el entorno original;
-- tratar la VM fuente como sistema de referencia y no como entorno de experimentación;
+- tratar la máquina virtual fuente como sistema de referencia y no como entorno de experimentación;
 - respaldar artefactos críticos antes de cualquier modificación;
 - evitar exposición innecesaria de secretos;
 - publicar únicamente una versión sanitizada del trabajo en GitHub;
-- documentar hallazgos y limitaciones sin comprometer información sensible.
+- documentar hallazgos y decisiones sin comprometer información sensible.
 
 ---
 
@@ -79,14 +79,14 @@ Aunque el dump de la base fue esencial para la restauración local, este no fue 
 - configuraciones internas;
 - referencias funcionales del sistema fuente.
 
-### 4.4. Uso de `.gitignore`
+### 4.4. Revisión manual de documentación y evidencias
 
-Se aplicó exclusión para archivos potencialmente sensibles, por ejemplo:
+Se consideró necesario revisar que los documentos y pantallazos no expusieran:
 
-- `.sql`
-- `.env`
-- secretos locales
-- respaldos completos
+- contraseñas visibles;
+- tokens;
+- rutas privadas;
+- información sensible del entorno fuente.
 
 ---
 
@@ -96,10 +96,10 @@ Se aplicó exclusión para archivos potencialmente sensibles, por ejemplo:
 
 La solución se desplegó separando:
 
-- Keycloak
-- PostgreSQL
-- configuración sensible
-- persistencia
+- Keycloak;
+- PostgreSQL;
+- configuración sensible;
+- persistencia.
 
 Esto permitió una arquitectura local más ordenada y alineada con buenas prácticas.
 
@@ -117,46 +117,74 @@ Se definieron probes de `readiness` y `liveness` para asegurar que Kubernetes va
 
 ---
 
-## 6. Consideraciones sobre exposición pública
+## 6. Riesgos identificados durante la migración
 
-### 6.1. Validación externa controlada
+### 6.1. Riesgo de asumir configuraciones sin validación directa
 
-Se probaron mecanismos de exposición pública mediante túneles seguros, con el objetivo de validar la accesibilidad de la aplicación desde una URL pública temporal.
+La prueba mostró que no toda la información inicial podía tomarse como verdad absoluta. Fue necesario validar directamente en la VM la configuración efectiva del entorno.
 
-### 6.2. Riesgo de exposición del admin console
+### 6.2. Riesgo de restaurar comportamiento heredado desde la base de datos
 
-El panel administrativo de Keycloak es un componente sensible. Por este motivo, las pruebas de publicación externa se hicieron solo con fines de validación y no como una recomendación de arquitectura definitiva.
+Al restaurar la base completa de Keycloak, parte de la configuración del entorno original quedó persistida. El caso más importante fue el atributo `frontendUrl`, que provocó redireccionamientos heredados al dominio fuente.
 
-### 6.3. Limitación observada
-
-La publicación externa alcanzó correctamente la aplicación; sin embargo, el acceso al admin console presentó una limitación asociada al flujo de verificación por iframe/cookies del navegador.
-
-Desde el punto de vista de seguridad, esta condición también refuerza la idea de que el acceso administrativo externo no debe exponerse de manera improvisada sobre dominios temporales sin un diseño más robusto.
-
----
-
-## 7. Riesgos identificados durante la ejecución
-
-### 7.1. Riesgo de usar información inicial no verificada
-
-La prueba mostró que no toda la información inicial suministrada podía tomarse como verdad absoluta. Fue necesario validar directamente en la VM la configuración efectiva del entorno.
-
-### 7.2. Riesgo de restaurar configuración heredada del entorno original
-
-Al restaurar la base completa de Keycloak, parte de la configuración del entorno fuente quedó persistida, incluyendo el atributo `frontendUrl`. Esto provocó comportamientos heredados como redireccionamientos al dominio original.
-
-### 7.3. Riesgo de exposición accidental en GitHub
+### 6.3. Riesgo de exposición accidental en GitHub
 
 Si no se sanitizaban los archivos antes de publicar el repositorio, existía riesgo de exponer:
 
 - credenciales de base de datos;
 - archivos de configuración con secretos;
 - dumps reales;
-- detalles del entorno fuente.
+- detalles internos del entorno fuente.
 
 ---
 
-## 8. Controles aplicados
+## 7. Control aplicado sobre el hallazgo de `frontendUrl`
+
+Uno de los aspectos más relevantes desde la perspectiva de seguridad y control de configuración fue la identificación del atributo `frontendUrl` persistido en la base restaurada.
+
+### Riesgo asociado
+
+Este valor seguía apuntando al dominio del entorno original, lo que generaba:
+
+- redireccionamientos no deseados;
+- comportamiento inconsistente entre entorno local y acceso externo;
+- dependencia funcional de una referencia heredada del entorno fuente.
+
+### Medida aplicada
+
+Se identificó el registro en la tabla `realm_attribute` y se eliminó del entorno restaurado, permitiendo que Keycloak resolviera correctamente las URLs en el nuevo contexto.
+
+### Resultado
+
+Con esta corrección:
+
+- se eliminó la dependencia del dominio heredado;
+- se estabilizó el comportamiento del acceso;
+- y se validó correctamente tanto el acceso local como el acceso externo.
+
+---
+
+## 8. Consideraciones sobre publicación externa
+
+### 8.1. Validación externa controlada
+
+Se utilizaron mecanismos de exposición pública temporal exclusivamente con fines de validación técnica.
+
+### 8.2. Protección del acceso administrativo
+
+El panel administrativo de Keycloak es un componente sensible. Por ese motivo, la publicación externa se trató como una prueba de verificación y no como una propuesta final de arquitectura productiva.
+
+### 8.3. Alcance de la validación
+
+La exposición pública se utilizó para comprobar que:
+
+- la aplicación era alcanzable externamente;
+- la resolución de URLs funcionaba correctamente;
+- y la plataforma podía validarse fuera del entorno local una vez corregida la configuración heredada.
+
+---
+
+## 9. Controles aplicados
 
 Los principales controles implementados durante la prueba fueron:
 
@@ -165,23 +193,26 @@ Los principales controles implementados durante la prueba fueron:
 - exclusión de secretos en el repositorio público;
 - uso de `Secret` en Kubernetes;
 - publicación de archivos de ejemplo en lugar de archivos reales;
-- documentación explícita de las limitaciones observadas.
+- revisión de configuración persistida en la base restaurada;
+- documentación explícita de hallazgos y decisiones técnicas.
 
 ---
 
-## 9. Recomendaciones de mejora futura
+## 10. Recomendaciones de mejora futura
 
 Si esta solución evolucionara más allá del alcance de la prueba, se recomienda incorporar:
 
 - gestión formal de secretos;
-- ingreso controlado mediante `Ingress`;
+- `Ingress` con control de exposición;
 - TLS administrado de forma explícita;
 - políticas más robustas para acceso administrativo;
 - automatización de despliegue;
-- revisión adicional del comportamiento del admin console bajo dominios públicos controlados.
+- revisión adicional de parámetros del realm restaurado antes de pasar a validación final.
 
 ---
 
-## 10. Conclusión
+## 11. Conclusión
 
-Desde el punto de vista de seguridad, la ejecución de la prueba fue abordada de manera responsable, priorizando la protección del entorno original, el uso controlado de respaldos y la publicación sanitizada de la solución. Aunque el objetivo principal del ejercicio fue técnico y funcional, se procuró mantener trazabilidad de riesgos, controles y decisiones, de modo que la entrega final no solo fuera funcional, sino también prudente en el manejo de información sensible.
+Desde el punto de vista de seguridad, la ejecución de la prueba fue abordada de manera responsable, priorizando la protección del entorno original, el uso controlado de respaldos y la publicación sanitizada de la solución. La identificación del atributo `frontendUrl` como configuración heredada fue especialmente relevante, ya que permitió resolver un comportamiento no deseado sin comprometer la estabilidad de la plataforma.
+
+En consecuencia, la solución final no solo quedó funcional, sino también documentada de forma prudente en el manejo de información sensible, riesgos y controles aplicados.
